@@ -1,0 +1,44 @@
+name: "Settings App Smoke Test"
+description: "Opens Settings, navigates through menus, verifies text elements"
+abort_on_failure: true
+
+steps:
+  - name: "launch_settings"
+    type: launch_app
+    package: "com.android.settings"
+    screenshot: true
+
+  - name: "wait_for_load"
+    type: wait
+    seconds: 2
+
+  - name: "verify_settings_title"
+    type: assert_text
+    text: "Settings"
+    screenshot: true
+
+  - name: "tap_network"
+    type: tap
+    x: 540
+    y: 400
+    screenshot: true
+
+  - name: "scroll_down"
+    type: swipe
+    x1: 540
+    y1: 1500
+    x2: 540
+    y2: 500
+    duration_ms: 300
+    screenshot: true
+
+  - name: "type_search"
+    type: type_text
+    text: "bluetooth"
+    screenshot: true
+
+  - name: "press_back"
+    type: press_key
+    keycode: 4
+    screenshot: true
+    max_retries: 1

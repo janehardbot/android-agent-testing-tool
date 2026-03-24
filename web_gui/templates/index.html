@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AATT — Android Agent Testing Tool</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🤖 Android Agent Testing Tool</h1>
+        <p class="subtitle">Dashboard</p>
+    </header>
+
+    <section class="card" id="devices-section">
+        <h2>📱 Connected Devices</h2>
+        <div id="devices-list">
+            {% if devices %}
+            <ul>
+                {% for d in devices %}
+                <li class="device">{{ d }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">No devices connected</p>
+            {% endif %}
+        </div>
+        <button onclick="refreshDevices()" class="btn btn-secondary">Refresh</button>
+    </section>
+
+    <section class="card" id="trigger-section">
+        <h2>🚀 Run Test Suite</h2>
+        <div id="suites-list"></div>
+        <button onclick="loadSuites()" class="btn btn-secondary">Load Suites</button>
+    </section>
+
+    <section class="card" id="runs-section">
+        <h2>📊 Recent Runs</h2>
+        <div id="runs-list">
+            {% if runs %}
+            <table>
+                <tr><th>Run ID</th><th>Suite</th><th>Status</th><th>Passed</th><th>Failed</th><th>Duration</th><th>Actions</th></tr>
+                {% for r in runs %}
+                <tr>
+                    <td><code>{{ r.run_id }}</code></td>
+                    <td>{{ r.suite_name }}</td>
+                    <td class="status-{{ r.status }}">{{ r.status }}</td>
+                    <td>{{ r.passed }}</td>
+                    <td>{{ r.failed }}</td>
+                    <td>{{ "%.0f" | format(r.duration_ms) }}ms</td>
+                    <td><a href="/api/runs/{{ r.run_id }}/report" target="_blank" class="btn btn-small">Report</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="muted">No runs yet</p>
+            {% endif %}
+        </div>
+        <button onclick="refreshRuns()" class="btn btn-secondary">Refresh</button>
+    </section>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
