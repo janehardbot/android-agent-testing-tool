@@ -1,0 +1,94 @@
+name: "VoIP Call Test — Phone A calls Phone B"
+description: >
+  Two-device call test. Phone A dials Phone B, Phone B answers,
+  both sides verify active call state, then Phone A hangs up.
+abort_on_failure: false
+
+# Device aliases are resolved at runtime via --device-a / --device-b
+# or ADB serials set in environment: AATT_DEVICE_A, AATT_DEVICE_B
+
+steps:
+  # --- Setup ---
+  - name: "unlock_phone_a"
+    type: wake_device
+    device: A
+    screenshot: true
+
+  - name: "unlock_phone_b"
+    type: wake_device
+    device: B
+    screenshot: true
+
+  - name: "wait_ready"
+    type: wait
+    seconds: 1
+
+  # --- Phone A dials Phone B ---
+  - name: "dial_from_a"
+    type: call
+    device: A
+    number: "{{PHONE_B_NUMBER}}"
+    screenshot: true
+
+  - name: "wait_for_ring"
+    type: wait
+    seconds: 3
+
+  - name: "verify_outgoing_call_a"
+    type: assert_call_state
+    device: A
+    expected_state: "OFFHOOK"
+    screenshot: true
+
+  # --- Phone B answers ---
+  - name: "answer_on_b"
+    type: answer_call
+    device: B
+    screenshot: true
+
+  - name: "wait_connected"
+    type: wait
+    seconds: 2
+
+  # --- Verify both sides active ---
+  - name: "verify_call_active_a"
+    type: assert_call_state
+    device: A
+    expected_state: "OFFHOOK"
+    screenshot: true
+
+  - name: "verify_call_active_b"
+    type: assert_call_state
+    device: B
+    expected_state: "OFFHOOK"
+    screenshot: true
+
+  # --- Optional: verify UI shows active call ---
+  - name: "assert_call_ui_b"
+    type: assert_text
+    device: B
+    text: "{{PHONE_A_NUMBER}}"
+    screenshot: true
+
+  # --- Hang up from A ---
+  - name: "hangup_from_a"
+    type: end_call
+    device: A
+    screenshot: true
+
+  - name: "wait_disconnect"
+    type: wait
+    seconds: 2
+
+  # --- Verify both sides idle ---
+  - name: "verify_idle_a"
+    type: assert_call_state
+    device: A
+    expected_state: "IDLE"
+    screenshot: true
+
+  - name: "verify_idle_b"
+    type: assert_call_state
+    device: B
+    expected_state: "IDLE"
+    screenshot: true
